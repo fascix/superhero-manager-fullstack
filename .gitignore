@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Environnement
+.env
+
+# Dossier de build TypeScript
+dist/
+
+# Uploads d’images
+uploads/
+
+# Logs
+*.log
+
+# Fichiers temporaires Mac
+.DS_Store
+
+# Tous les fichiers .ts compilés en .js dans un dossier spécifique
+src/**/*.js
+
+# Tous les fichiers .ts compilés en .js map
+src/**/*.js.map
