@@ -1,15 +1,24 @@
-const heroController = require("../controllers/heroController");
-const router = require("express").Router();
+import express from 'express';
+import { 
+  getAllHeroes, 
+  getHeroById, 
+  createHero, 
+  updateHero, 
+  deleteHero 
+} from '../controllers/heroController';
+import { authMiddleware } from '../middleware/authMiddleware';
+import { roleMiddleware } from '../middleware/roleMiddleware';
+import { upload } from '../middleware/uploadMiddleware';
 
-router.get("/", heroController.getHeroes);
-router.get("/:id", heroController.getHeroById);
-router.post("/", heroController.addHero);
-router.put("/:id", heroController.updateHero);
-router.delete("/:id", heroController.deleteHero);
-router.get(
-	"/test",
-	(_req: any, res: { json: (arg0: { message: string }) => any }) =>
-		res.json({ message: "API fonctionne !" })
-);
+const router = express.Router();
 
-module.exports = router;
+// Routes publiques (lecture)
+router.get('/', getAllHeroes);
+router.get('/:id', getHeroById);
+
+// Routes protégées (modification)
+router.post('/', authMiddleware, roleMiddleware(['admin', 'editor']), upload.single('image'), createHero);
+router.put('/:id', authMiddleware, roleMiddleware(['admin', 'editor']), upload.single('image'), updateHero);
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), deleteHero);
+
+export default router;
