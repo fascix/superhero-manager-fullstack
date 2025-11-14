@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Hero } from '../types/Hero';
+import type { Hero } from '../types/Hero';
 import { deleteHero } from '../api/heroApi';
 import { useAuth } from '../hooks/useAuth';
 

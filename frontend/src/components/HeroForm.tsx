@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Hero } from '../types/Hero';
+import { useState } from 'react';
+import type { Hero } from '../types/Hero';
 
 interface HeroFormProps {
   initialData?: Hero;

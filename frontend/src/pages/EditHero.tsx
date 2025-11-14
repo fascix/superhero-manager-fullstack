@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { HeroForm } from '../components/HeroForm';
 import { getHeroById, updateHero } from '../api/heroApi';
-import { Hero } from '../types/Hero';
+import type { Hero } from '../types/Hero';
 
 export const EditHero = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,13 +11,7 @@ export const EditHero = () => {
   const [hero, setHero] = useState<Hero | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (id) {
-      fetchHero(id);
-    }
-  }, [id]);
-
-  const fetchHero = async (heroId: string) => {
+  const fetchHero = useCallback(async (heroId: string) => {
     try {
       const response = await getHeroById(heroId);
       setHero(response.data);
@@ -28,7 +22,13 @@ export const EditHero = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    if (id) {
+      fetchHero(id);
+    }
+  }, [id, fetchHero]);
 
   const handleSubmit = async (heroData: FormData) => {
     if (!id) return;

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { getHeroById, deleteHero } from '../api/heroApi';
-import { Hero } from '../types/Hero';
+import type { Hero } from '../types/Hero';
 import { useAuth } from '../hooks/useAuth';
 
 export const HeroDetails = () => {
@@ -12,13 +12,7 @@ export const HeroDetails = () => {
   const [hero, setHero] = useState<Hero | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (id) {
-      fetchHero(id);
-    }
-  }, [id]);
-
-  const fetchHero = async (heroId: string) => {
+  const fetchHero = useCallback(async (heroId: string) => {
     try {
       const response = await getHeroById(heroId);
       setHero(response.data);
@@ -29,7 +23,13 @@ export const HeroDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    if (id) {
+      fetchHero(id);
+    }
+  }, [id, fetchHero]);
 
   const handleDelete = async () => {
     if (!hero || !id) return;

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllHeroes } from "../api/heroApi";
-import { Hero } from "../types/Hero";
+import type { Hero } from "../types/Hero";
 import { HeroCard } from "../components/HeroCard";
 import { SearchBar } from "../components/SearchBar";
 import { Navbar } from "../components/Navbar";
@@ -14,11 +14,7 @@ export const Dashboard = () => {
   const [universFilter, setUniversFilter] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchHeroes();
-  }, [searchTerm, universFilter]);
-
-  const fetchHeroes = async () => {
+  const fetchHeroes = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getAllHeroes(searchTerm, universFilter);
@@ -30,7 +26,11 @@ export const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, universFilter]);
+
+  useEffect(() => {
+    fetchHeroes();
+  }, [fetchHeroes]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
