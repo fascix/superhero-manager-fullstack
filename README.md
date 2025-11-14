@@ -78,7 +78,13 @@ cd backend
 npm install
 ```
 
-Le fichier `.env` est déjà créé avec les configurations par défaut :
+Créez un fichier `.env` à partir du fichier d'exemple :
+
+```bash
+cp .env.example .env
+```
+
+Le fichier `.env` contient les configurations suivantes :
 
 ```env
 PORT=5000
