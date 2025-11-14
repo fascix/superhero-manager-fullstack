@@ -2,7 +2,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from '../api/heroApi';
+import { login } from "../api/heroApi";
 import { useAuth } from "../hooks/useAuth";
 
 export const LoginPage = () => {
@@ -31,48 +31,37 @@ export const LoginPage = () => {
 	};
 
 	return (
-		<div style={{ maxWidth: "400px", margin: "100px auto", padding: "20px" }}>
-			<h1>🦸 Connexion SuperHero Manager</h1>
-			{error && <p style={{ color: "red" }}>{error}</p>}
+		<div className="login-container">
+			<div className="login-box">
+				<h1>🦸 Connexion SuperHero Manager</h1>
+				{error && <p className="login-error">{error}</p>}
 
-			<form onSubmit={handleSubmit}>
-				<div style={{ marginBottom: "15px" }}>
-					<label>Nom d'utilisateur:</label>
-					<input
-						type="text"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-						required
-						style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-					/>
-				</div>
+				<form onSubmit={handleSubmit}>
+					<div className="form-group">
+						<label>Nom d'utilisateur:</label>
+						<input
+							type="text"
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+							required
+						/>
+					</div>
 
-				<div style={{ marginBottom: "15px" }}>
-					<label>Mot de passe:</label>
-					<input
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						required
-						style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-					/>
-				</div>
+					<div className="form-group">
+						<label>Mot de passe:</label>
+						<input
+							type="password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							required
+						/>
+					</div>
 
-				<button
-					type="submit"
-					style={{
-						width: "100%",
-						padding: "10px",
-						background: "#007bff",
-						color: "white",
-						border: "none",
-						cursor: "pointer",
-						borderRadius: "4px",
-					}}
-				>
-					Se connecter
-				</button>
-			</form>
+					<button type="submit" className="login-button">
+						Se connecter
+					</button>
+				</form>
+			</div>
 		</div>
 	);
 };
