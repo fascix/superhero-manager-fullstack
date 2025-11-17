@@ -1,9 +1,13 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-// import { ProtectedRoute } from './components/ProtectedRoute';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
-// import { Dashboard } from './pages/Dashboard'; // À créer
+import { Dashboard } from './pages/Dashboard';
+import { AddHero } from './pages/AddHero';
+import { EditHero } from './pages/EditHero';
+import { HeroDetails } from './pages/HeroDetails';
+import { AdminPage } from './pages/AdminPage';
 
 function App() {
   return (
@@ -11,15 +15,33 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          {/* <Route
-            path="/dashboard"
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/hero/:id" element={<HeroDetails />} />
+          <Route
+            path="/add"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <AddHero />
               </ProtectedRoute>
             }
-          /> */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          />
+          <Route
+            path="/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditHero />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
