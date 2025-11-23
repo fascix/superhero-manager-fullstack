@@ -16,7 +16,7 @@ export interface Hero {
 export interface User {
 	id: string;
 	username: string;
-	role: "admin" | "editor";
+	role: "admin" | "editor" | "viewer";
 }
 
 export interface AuthResponse {
