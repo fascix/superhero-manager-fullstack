@@ -41,11 +41,20 @@ export const Dashboard = () => {
 			// Filtre par univers
 			// Note: Les données JSON peuvent avoir "Marvel Comics" ou "DC Comics", donc on vérifie si ça inclut le terme
 			if (univers) {
-				filtered = filtered.filter(
-					(hero) =>
-						hero.univers &&
-						hero.univers.toLowerCase().includes(univers.toLowerCase())
-				);
+				if (univers === "Autre") {
+					filtered = filtered.filter(
+						(hero) =>
+							hero.univers &&
+							!hero.univers.toLowerCase().includes("marvel") &&
+							!hero.univers.toLowerCase().includes("dc")
+					);
+				} else {
+					filtered = filtered.filter(
+						(hero) =>
+							hero.univers &&
+							hero.univers.toLowerCase().includes(univers.toLowerCase())
+					);
+				}
 			}
 
 			// Filtre par nom ou alias avec normalisation
