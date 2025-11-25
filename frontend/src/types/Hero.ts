@@ -10,6 +10,7 @@ export interface Hero {
 	origine?: string;
 	premiereApparition?: string;
 	createdAt?: string;
+	DateCreated?: Date;
 }
 
 // Types pour l'authentification

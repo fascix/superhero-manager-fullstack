@@ -57,6 +57,24 @@ export const Dashboard = () => {
 				}
 			}
 
+			// Filtre par date d’ajout ou ordre alphabétique
+			if (searchTerm === "date_asc") {
+				filtered = [...filtered].sort(
+					(a, b) =>
+						new Date(a.DateCreated || 0).getTime() - new Date(b.DateCreated || 0).getTime()
+				);
+			} else if (searchTerm === "date_desc") {
+				filtered = [...filtered].sort(
+					(a, b) =>
+						new Date(b.DateCreated || 0).getTime() - new Date(a.DateCreated || 0).getTime()
+				);
+			} else if (searchTerm === "alpha_asc") {
+				filtered = [...filtered].sort((a, b) => a.nom.localeCompare(b.nom));
+			} else if (searchTerm === "alpha_desc") {
+				filtered = [...filtered].sort((a, b) => b.nom.localeCompare(a.nom));
+			}
+
+
 			// Filtre par nom ou alias avec normalisation
 			if (searchTerm) {
 				const normalizedSearch = normalizeString(searchTerm);
