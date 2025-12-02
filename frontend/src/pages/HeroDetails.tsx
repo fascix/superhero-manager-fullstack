@@ -102,16 +102,6 @@ export const HeroDetails = () => {
 									<h5>📖 Description</h5>
 									<p>{hero.description}</p>
 								</div>
-								<div className="mb-4">
-									<h5>⚡ Pouvoirs</h5>
-									<div className="d-flex flex-wrap gap-2">
-										{hero.pouvoirs.map((pouvoir, index) => (
-											<span key={index} className="badge bg-success">
-												{pouvoir}
-											</span>
-										))}
-									</div>
-								</div>
 								{hero.origine && (
 									<div className="mb-3">
 										<h5>🌍 Origine</h5>
@@ -124,85 +114,16 @@ export const HeroDetails = () => {
 										<p>{hero.premiereApparition}</p>
 									</div>
 								)}
-								{hero.stats && (
-									<div className="mb-4">
-										<h5>📊 Statistiques</h5>
-										<div className="row">
-											<div className="col-6 mb-2">
-												<small className="text-muted">🧠 Intelligence</small>
-												<div className="progress">
-													<div
-														className="progress-bar bg-info"
-														role="progressbar"
-														style={{ width: `${hero.stats.intelligence}%` }}
-													>
-														{hero.stats.intelligence}
-													</div>
-												</div>
-											</div>
-											<div className="col-6 mb-2">
-												<small className="text-muted">💪 Force</small>
-												<div className="progress">
-													<div
-														className="progress-bar bg-danger"
-														role="progressbar"
-														style={{ width: `${hero.stats.strength}%` }}
-													>
-														{hero.stats.strength}
-													</div>
-												</div>
-											</div>
-											<div className="col-6 mb-2">
-												<small className="text-muted">⚡ Vitesse</small>
-												<div className="progress">
-													<div
-														className="progress-bar bg-warning"
-														role="progressbar"
-														style={{ width: `${hero.stats.speed}%` }}
-													>
-														{hero.stats.speed}
-													</div>
-												</div>
-											</div>
-											<div className="col-6 mb-2">
-												<small className="text-muted">🛡️ Résistance</small>
-												<div className="progress">
-													<div
-														className="progress-bar bg-success"
-														role="progressbar"
-														style={{ width: `${hero.stats.durability}%` }}
-													>
-														{hero.stats.durability}
-													</div>
-												</div>
-											</div>
-											<div className="col-6 mb-2">
-												<small className="text-muted">🔥 Puissance</small>
-												<div className="progress">
-													<div
-														className="progress-bar bg-primary"
-														role="progressbar"
-														style={{ width: `${hero.stats.power}%` }}
-													>
-														{hero.stats.power}
-													</div>
-												</div>
-											</div>
-											<div className="col-6 mb-2">
-												<small className="text-muted">⚔️ Combat</small>
-												<div className="progress">
-													<div
-														className="progress-bar bg-dark"
-														role="progressbar"
-														style={{ width: `${hero.stats.combat}%` }}
-													>
-														{hero.stats.combat}
-													</div>
-												</div>
-											</div>
-										</div>
+								<div className="mb-4">
+									<h5>⚡ Pouvoirs</h5>
+									<div className="d-flex flex-wrap gap-2">
+										{hero.pouvoirs.map((pouvoir, index) => (
+											<span key={index} className="badge bg-success">
+												{pouvoir}
+											</span>
+										))}
 									</div>
-								)}
+								</div>
 								{hero.createdAt && (
 									<div className="text-muted mt-4">
 										<small>

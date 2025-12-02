@@ -211,8 +211,8 @@ export const AdminPage = () => {
 				</div>
 
 				<div className="alert alert-info mt-4" role="alert">
-					<strong>Note:</strong> Les logs sont maintenant enregistrés dans le
-					dossier backend/logs
+					<strong>Note:</strong> Les logs sont enregistrés dans le dossier
+					backend/logs
 				</div>
 			</div>
 

@@ -61,12 +61,14 @@ export const Dashboard = () => {
 			if (searchTerm === "date_asc") {
 				filtered = [...filtered].sort(
 					(a, b) =>
-						new Date(a.DateCreated || 0).getTime() - new Date(b.DateCreated || 0).getTime()
+						new Date(a.DateCreated || 0).getTime() -
+						new Date(b.DateCreated || 0).getTime()
 				);
 			} else if (searchTerm === "date_desc") {
 				filtered = [...filtered].sort(
 					(a, b) =>
-						new Date(b.DateCreated || 0).getTime() - new Date(a.DateCreated || 0).getTime()
+						new Date(b.DateCreated || 0).getTime() -
+						new Date(a.DateCreated || 0).getTime()
 				);
 			} else if (searchTerm === "alpha_asc") {
 				filtered = [...filtered].sort((a, b) => a.nom.localeCompare(b.nom));
@@ -74,9 +76,15 @@ export const Dashboard = () => {
 				filtered = [...filtered].sort((a, b) => b.nom.localeCompare(a.nom));
 			}
 
+			// Filtre par nom ou alias avec normalisation (uniquement si ce n'est pas une option de tri)
+			const isSortOption = [
+				"date_asc",
+				"date_desc",
+				"alpha_asc",
+				"alpha_desc",
+			].includes(searchTerm);
 
-			// Filtre par nom ou alias avec normalisation
-			if (searchTerm) {
+			if (searchTerm && !isSortOption) {
 				const normalizedSearch = normalizeString(searchTerm);
 				filtered = filtered.filter((hero) => {
 					const normalizedNom = normalizeString(hero.nom);

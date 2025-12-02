@@ -71,19 +71,52 @@ export const createHero = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
+	logInfo("Début de la création d'un héros", {
+		body: req.body,
+		file: req.file,
+	});
 	try {
-		const heroData = req.body;
+		const heroData = { ...req.body };
 
-		// Ajouter l'image si uploadée
+		logInfo("Données initiales", { heroData });
+
 		if (req.file) {
 			heroData.image = `/uploads/${req.file.filename}`;
+			logInfo("Image ajoutée", { imageName: heroData.image });
 		}
 
+		if (heroData.pouvoirs && typeof heroData.pouvoirs === "string") {
+			try {
+				heroData.pouvoirs = JSON.parse(heroData.pouvoirs);
+				logInfo("Pouvoirs parsés", { pouvoirs: heroData.pouvoirs });
+			} catch (e) {
+				logError("Erreur de parsing JSON pour les pouvoirs", {
+					pouvoirs: heroData.pouvoirs,
+					error: e,
+				});
+				// Ne pas bloquer si le parsing échoue, Mongoose le gérera
+			}
+		}
+
+		if (heroData.stats && typeof heroData.stats === "string") {
+			try {
+				heroData.stats = JSON.parse(heroData.stats);
+				logInfo("Stats parsées", { stats: heroData.stats });
+			} catch (e) {
+				logError("Erreur de parsing JSON pour les stats", {
+					stats: heroData.stats,
+					error: e,
+				});
+			}
+		}
+
+		logInfo("Préparation à la création du modèle", { finalHeroData: heroData });
 		const newHero = new Hero(heroData);
+
+		logInfo("Modèle créé, tentative de sauvegarde...");
 		await newHero.save();
-		logSuccess(`Nouveau héros créé - ${newHero.nom}`, {
+		logSuccess(`Nouveau héros créé avec succès - ${newHero.nom}`, {
 			id: newHero._id,
-			nom: newHero.nom,
 		});
 
 		res.status(201).json({
@@ -91,9 +124,10 @@ export const createHero = async (
 			hero: newHero,
 		});
 	} catch (error: any) {
-		logError("Erreur lors de la création d'un héros", {
-			error: error.message,
-			heroData,
+		logError("ERREUR FATALE lors de la création d'un héros", {
+			errorMessage: error.message,
+			stack: error.stack,
+			body: req.body,
 		});
 		res
 			.status(500)
