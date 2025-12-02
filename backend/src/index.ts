@@ -5,6 +5,7 @@ import path from "path";
 import { connectDB } from "./config/db";
 import heroRoutes from "./routes/heroRoutes";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/heroes", heroRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // Démarrage du serveur
 const PORT = 5001;

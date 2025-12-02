@@ -11,6 +11,15 @@ export interface Hero {
 	premiereApparition?: string;
 	createdAt?: string;
 	DateCreated?: Date;
+	// Stats numériques de pouvoirs (0-100)
+	stats?: {
+		intelligence: number;
+		strength: number;
+		speed: number;
+		durability: number;
+		power: number;
+		combat: number;
+	};
 }
 
 // Types pour l'authentification

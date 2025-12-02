@@ -11,8 +11,11 @@ interface HeroCardProps {
 
 export const HeroCard = ({ hero, onDelete }: HeroCardProps) => {
 	const { user } = useAuth();
+	// L'image peut déjà contenir /uploads/ depuis le backend
 	const imageUrl = hero.image
-		? `http://localhost:5001/uploads/${hero.image}`
+		? hero.image.startsWith("/uploads/")
+			? `http://localhost:5001${hero.image}`
+			: `http://localhost:5001/uploads/${hero.image}`
 		: "/placeholder.svg";
 
 	const handleDelete = async () => {
