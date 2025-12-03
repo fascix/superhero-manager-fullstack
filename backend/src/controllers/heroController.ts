@@ -13,7 +13,6 @@ export const getAllHeroes = async (
 		const { search, univers, sort } = req.query;
 		let query: any = {};
 
-		// Filtre par recherche (nom ou alias)
 		if (search) {
 			query.$or = [
 				{ nom: { $regex: search, $options: "i" } },
@@ -21,12 +20,10 @@ export const getAllHeroes = async (
 			];
 		}
 
-		// Filtre par univers
 		if (univers) {
 			query.univers = univers;
 		}
 
-		// Tri
 		let sortOption: any = {};
 		if (sort === "nom") sortOption.nom = 1;
 		else if (sort === "recent") sortOption.createdAt = -1;
@@ -71,53 +68,21 @@ export const createHero = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	logInfo("Début de la création d'un héros", {
-		body: req.body,
-		file: req.file,
-	});
 	try {
+		// Créer une copie propre de l'objet pour éviter les problèmes de prototype avec Multer
 		const heroData = { ...req.body };
-
-		logInfo("Données initiales", { heroData });
 
 		if (req.file) {
 			heroData.image = `/uploads/${req.file.filename}`;
-			logInfo("Image ajoutée", { imageName: heroData.image });
-		}
-
-		if (heroData.pouvoirs && typeof heroData.pouvoirs === "string") {
-			try {
-				heroData.pouvoirs = JSON.parse(heroData.pouvoirs);
-				logInfo("Pouvoirs parsés", { pouvoirs: heroData.pouvoirs });
-			} catch (e) {
-				logError("Erreur de parsing JSON pour les pouvoirs", {
-					pouvoirs: heroData.pouvoirs,
-					error: e,
-				});
-				// Ne pas bloquer si le parsing échoue, Mongoose le gérera
-			}
 		}
 
 		if (heroData.stats && typeof heroData.stats === "string") {
-			try {
-				heroData.stats = JSON.parse(heroData.stats);
-				logInfo("Stats parsées", { stats: heroData.stats });
-			} catch (e) {
-				logError("Erreur de parsing JSON pour les stats", {
-					stats: heroData.stats,
-					error: e,
-				});
-			}
+			heroData.stats = JSON.parse(heroData.stats);
 		}
 
-		logInfo("Préparation à la création du modèle", { finalHeroData: heroData });
 		const newHero = new Hero(heroData);
-
-		logInfo("Modèle créé, tentative de sauvegarde...");
 		await newHero.save();
-		logSuccess(`Nouveau héros créé avec succès - ${newHero.nom}`, {
-			id: newHero._id,
-		});
+		logSuccess(`Nouveau héros créé - ${newHero.nom}`, { id: newHero._id });
 
 		res.status(201).json({
 			message: "Héros créé avec succès",
@@ -141,17 +106,23 @@ export const updateHero = async (
 	res: Response
 ): Promise<void> => {
 	try {
-		const heroData = req.body;
+		// Créer une copie propre de l'objet
+		const heroData = { ...req.body };
 		const hero = await Hero.findById(req.params.id);
 
 		if (!hero) {
+			logWarning(
+				`Tentative de mise à jour d'un héros non trouvé - ID: ${req.params.id}`
+			);
 			res.status(404).json({ message: "Héros non trouvé" });
 			return;
 		}
 
-		// Gérer le remplacement d'image
+		if (heroData.stats && typeof heroData.stats === "string") {
+			heroData.stats = JSON.parse(heroData.stats);
+		}
+
 		if (req.file) {
-			// Supprimer l'ancienne image si elle existe
 			if (hero.image) {
 				const oldImagePath = path.join(__dirname, "../../", hero.image);
 				if (fs.existsSync(oldImagePath)) {
@@ -167,6 +138,7 @@ export const updateHero = async (
 		});
 
 		logSuccess(`Héros mis à jour - ${updatedHero?.nom}`, { id: req.params.id });
+
 		res.json({
 			message: "Héros mis à jour avec succès",
 			hero: updatedHero,
@@ -191,11 +163,13 @@ export const deleteHero = async (
 		const hero = await Hero.findById(req.params.id);
 
 		if (!hero) {
+			logWarning(
+				`Tentative de suppression d'un héros non trouvé - ID: ${req.params.id}`
+			);
 			res.status(404).json({ message: "Héros non trouvé" });
 			return;
 		}
 
-		// Supprimer l'image associée
 		if (hero.image) {
 			const imagePath = path.join(__dirname, "../../", hero.image);
 			if (fs.existsSync(imagePath)) {

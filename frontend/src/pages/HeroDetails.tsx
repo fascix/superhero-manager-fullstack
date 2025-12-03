@@ -5,6 +5,24 @@ import { Navbar } from "../components/Navbar";
 import { getHeroById } from "../api/heroApi";
 import type { Hero } from "../types/Hero";
 
+// Fonction pour extraire les stats de l'ancien format 'pouvoirs'
+const getStatsFromPouvoirs = (pouvoirs: any[]): Hero["stats"] => {
+	const stats: any = {};
+	if (!pouvoirs || !Array.isArray(pouvoirs)) return stats;
+
+	pouvoirs.forEach((item: string) => {
+		const [key, val] = item.split(":");
+		if (key && val) {
+			const cleanKey = key.trim().toLowerCase();
+			const cleanVal = parseInt(val.trim(), 10);
+			if (!isNaN(cleanVal)) {
+				stats[cleanKey] = cleanVal;
+			}
+		}
+	});
+	return stats;
+};
+
 export const HeroDetails = () => {
 	const { id } = useParams<{ id: string }>();
 	const [hero, setHero] = useState<Hero | null>(null);
@@ -63,6 +81,17 @@ export const HeroDetails = () => {
 			: `http://localhost:5001/uploads/${hero.image}`
 		: "/placeholder.svg";
 
+	// Logique de réparation des stats
+	let displayStats = hero.stats;
+	const isStatsDefault =
+		hero.stats && Object.values(hero.stats).every((val) => val === 50);
+	if ((!hero.stats || isStatsDefault) && (hero as any).pouvoirs) {
+		const parsedStats = getStatsFromPouvoirs((hero as any).pouvoirs);
+		if (Object.keys(parsedStats).length > 0) {
+			displayStats = parsedStats;
+		}
+	}
+
 	return (
 		<>
 			<Navbar />
@@ -102,6 +131,31 @@ export const HeroDetails = () => {
 									<h5>📖 Description</h5>
 									<p>{hero.description}</p>
 								</div>
+
+								{displayStats && (
+									<div className="mb-4">
+										<h5>⚡ Statistiques</h5>
+										<div className="row">
+											{Object.entries(displayStats).map(([statName, value]) => (
+												<div className="col-md-6 mb-2" key={statName}>
+													<small className="text-muted text-capitalize">
+														{statName}
+													</small>
+													<div className="progress">
+														<div
+															className="progress-bar"
+															role="progressbar"
+															style={{ width: `${value}%` }}
+														>
+															{value}
+														</div>
+													</div>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
 								{hero.origine && (
 									<div className="mb-3">
 										<h5>🌍 Origine</h5>
@@ -114,16 +168,6 @@ export const HeroDetails = () => {
 										<p>{hero.premiereApparition}</p>
 									</div>
 								)}
-								<div className="mb-4">
-									<h5>⚡ Pouvoirs</h5>
-									<div className="d-flex flex-wrap gap-2">
-										{hero.pouvoirs.map((pouvoir, index) => (
-											<span key={index} className="badge bg-success">
-												{pouvoir}
-											</span>
-										))}
-									</div>
-								</div>
 								{hero.createdAt && (
 									<div className="text-muted mt-4">
 										<small>
@@ -131,7 +175,7 @@ export const HeroDetails = () => {
 											{new Date(hero.createdAt).toLocaleDateString("fr-FR")}
 										</small>
 									</div>
-								)}{" "}
+								)}
 							</div>
 						</div>
 					</div>

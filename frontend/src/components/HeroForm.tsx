@@ -19,16 +19,6 @@ const heroSchema = yup.object().shape({
 		.string()
 		.required("La description est requise")
 		.min(10, "La description doit contenir au moins 10 caractères"),
-	pouvoirs: yup
-		.string()
-		.required("Au moins un pouvoir est requis")
-		.test("has-powers", "Au moins un pouvoir est requis", (value) => {
-			return value
-				? value.split(",").filter((p) => p.trim()).length > 0
-				: false;
-		}),
-	origine: yup.string(),
-	premiereApparition: yup.string(),
 });
 
 interface HeroFormProps {
@@ -42,7 +32,6 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 	const [alias, setAlias] = useState(hero?.alias || "");
 	const [univers, setUnivers] = useState(hero?.univers || "Marvel");
 	const [description, setDescription] = useState(hero?.description || "");
-	const [pouvoirs, setPouvoirs] = useState(hero?.pouvoirs?.join(", ") || "");
 	const [origine, setOrigine] = useState(hero?.origine || "");
 	const [premiereApparition, setPremiereApparition] = useState(
 		hero?.premiereApparition || ""
@@ -52,14 +41,16 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
 	// Stats de pouvoirs
-	const [intelligence, setIntelligence] = useState(
-		hero?.stats?.intelligence || 50
+	const [stats, setStats] = useState(
+		hero?.stats || {
+			intelligence: 50,
+			strength: 50,
+			speed: 50,
+			durability: 50,
+			power: 50,
+			combat: 50,
+		}
 	);
-	const [strength, setStrength] = useState(hero?.stats?.strength || 50);
-	const [speed, setSpeed] = useState(hero?.stats?.speed || 50);
-	const [durability, setDurability] = useState(hero?.stats?.durability || 50);
-	const [power, setPower] = useState(hero?.stats?.power || 50);
-	const [combat, setCombat] = useState(hero?.stats?.combat || 50);
 
 	useEffect(() => {
 		if (hero) {
@@ -67,35 +58,33 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 			setAlias(hero.alias);
 			setUnivers(hero.univers);
 			setDescription(hero.description);
-			setPouvoirs(hero.pouvoirs?.join(", ") || "");
 			setOrigine(hero.origine || "");
 			setPremiereApparition(hero.premiereApparition || "");
-			setIntelligence(hero.stats?.intelligence || 50);
-			setStrength(hero.stats?.strength || 50);
-			setSpeed(hero.stats?.speed || 50);
-			setDurability(hero.stats?.durability || 50);
-			setPower(hero.stats?.power || 50);
-			setCombat(hero.stats?.combat || 50);
+			setStats(
+				hero.stats || {
+					intelligence: 50,
+					strength: 50,
+					speed: 50,
+					durability: 50,
+					power: 50,
+					combat: 50,
+				}
+			);
 		}
 	}, [hero]);
+
+	const handleStatChange = (statName: keyof typeof stats, value: number) => {
+		setStats({ ...stats, [statName]: value });
+	};
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		setSubmitting(true);
 		setErrors({});
 
-		// Validation avec Yup
 		try {
 			await heroSchema.validate(
-				{
-					nom,
-					alias,
-					univers,
-					description,
-					pouvoirs,
-					origine,
-					premiereApparition,
-				},
+				{ nom, alias, univers, description },
 				{ abortEarly: false }
 			);
 		} catch (err: any) {
@@ -115,25 +104,9 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 		formData.append("alias", alias);
 		formData.append("univers", univers);
 		formData.append("description", description);
-		formData.append(
-			"pouvoirs",
-			JSON.stringify(pouvoirs.split(",").map((p) => p.trim()))
-		);
 		formData.append("origine", origine);
 		formData.append("premiereApparition", premiereApparition);
-
-		// Ajouter les stats de pouvoirs
-		formData.append(
-			"stats",
-			JSON.stringify({
-				intelligence,
-				strength,
-				speed,
-				durability,
-				power,
-				combat,
-			})
-		);
+		formData.append("stats", JSON.stringify(stats));
 
 		if (image) {
 			formData.append("image", image);
@@ -148,6 +121,7 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 
 	return (
 		<form onSubmit={handleSubmit}>
+			{/* Champs existants */}
 			<div className="row">
 				<div className="col-md-6 mb-3">
 					<label className="form-label">Nom *</label>
@@ -159,7 +133,6 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 					/>
 					{errors.nom && <div className="invalid-feedback">{errors.nom}</div>}
 				</div>
-
 				<div className="col-md-6 mb-3">
 					<label className="form-label">Alias *</label>
 					<input
@@ -188,7 +161,6 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 						<option value="Autre">Autre</option>
 					</select>
 				</div>
-
 				<div className="col-md-6 mb-3">
 					<label className="form-label">Première apparition</label>
 					<input
@@ -215,22 +187,6 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 			</div>
 
 			<div className="mb-3">
-				<label className="form-label">
-					Pouvoirs (séparés par des virgules) *
-				</label>
-				<input
-					type="text"
-					className={`form-control ${errors.pouvoirs ? "is-invalid" : ""}`}
-					placeholder="Ex: Super force, Vol, Vision laser"
-					value={pouvoirs}
-					onChange={(e) => setPouvoirs(e.target.value)}
-				/>
-				{errors.pouvoirs && (
-					<div className="invalid-feedback">{errors.pouvoirs}</div>
-				)}
-			</div>
-
-			<div className="mb-3">
 				<label className="form-label">Origine</label>
 				<input
 					type="text"
@@ -239,6 +195,32 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 					value={origine}
 					onChange={(e) => setOrigine(e.target.value)}
 				/>
+			</div>
+
+			{/* Section des statistiques */}
+			<h5 className="mt-4 mb-3">⚡ Statistiques</h5>
+			<div className="row">
+				{Object.keys(stats).map((statName) => (
+					<div key={statName} className="col-md-6 mb-3">
+						<label className="form-label text-capitalize">
+							{statName}:{" "}
+							<strong>{stats[statName as keyof typeof stats]}</strong>
+						</label>
+						<input
+							type="range"
+							className="form-range"
+							min="0"
+							max="100"
+							value={stats[statName as keyof typeof stats]}
+							onChange={(e) =>
+								handleStatChange(
+									statName as keyof typeof stats,
+									Number(e.target.value)
+								)
+							}
+						/>
+					</div>
+				))}
 			</div>
 
 			<div className="mb-3">
@@ -252,92 +234,6 @@ export const HeroForm = ({ hero, onSubmit, submitLabel }: HeroFormProps) => {
 				{hero?.image && !image && (
 					<small className="text-muted">Image actuelle: {hero.image}</small>
 				)}
-			</div>
-
-			<h5 className="mt-4 mb-3">⚡ Statistiques de pouvoirs</h5>
-			<div className="row">
-				<div className="col-md-6 mb-3">
-					<label className="form-label">
-						🧠 Intelligence: <strong>{intelligence}</strong>
-					</label>
-					<input
-						type="range"
-						className="form-range"
-						min="0"
-						max="100"
-						value={intelligence}
-						onChange={(e) => setIntelligence(Number(e.target.value))}
-					/>
-				</div>
-				<div className="col-md-6 mb-3">
-					<label className="form-label">
-						💪 Force (Strength): <strong>{strength}</strong>
-					</label>
-					<input
-						type="range"
-						className="form-range"
-						min="0"
-						max="100"
-						value={strength}
-						onChange={(e) => setStrength(Number(e.target.value))}
-					/>
-				</div>
-			</div>
-			<div className="row">
-				<div className="col-md-6 mb-3">
-					<label className="form-label">
-						⚡ Vitesse (Speed): <strong>{speed}</strong>
-					</label>
-					<input
-						type="range"
-						className="form-range"
-						min="0"
-						max="100"
-						value={speed}
-						onChange={(e) => setSpeed(Number(e.target.value))}
-					/>
-				</div>
-				<div className="col-md-6 mb-3">
-					<label className="form-label">
-						🛡️ Résistance (Durability): <strong>{durability}</strong>
-					</label>
-					<input
-						type="range"
-						className="form-range"
-						min="0"
-						max="100"
-						value={durability}
-						onChange={(e) => setDurability(Number(e.target.value))}
-					/>
-				</div>
-			</div>
-			<div className="row">
-				<div className="col-md-6 mb-3">
-					<label className="form-label">
-						🔥 Puissance (Power): <strong>{power}</strong>
-					</label>
-					<input
-						type="range"
-						className="form-range"
-						min="0"
-						max="100"
-						value={power}
-						onChange={(e) => setPower(Number(e.target.value))}
-					/>
-				</div>
-				<div className="col-md-6 mb-3">
-					<label className="form-label">
-						⚔️ Combat: <strong>{combat}</strong>
-					</label>
-					<input
-						type="range"
-						className="form-range"
-						min="0"
-						max="100"
-						value={combat}
-						onChange={(e) => setCombat(Number(e.target.value))}
-					/>
-				</div>
 			</div>
 
 			<button type="submit" className="btn btn-primary" disabled={submitting}>

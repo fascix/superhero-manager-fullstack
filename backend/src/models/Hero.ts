@@ -4,14 +4,12 @@ export interface IHero extends Document {
 	nom: string;
 	alias: string;
 	univers: string;
-	pouvoirs: string[];
 	description: string;
 	image?: string;
 	origine?: string;
 	premiereApparition?: string;
 	createdAt?: Date;
-	// Stats numériques de pouvoirs (0-100)
-	stats?: {
+	stats: {
 		intelligence: number;
 		strength: number;
 		speed: number;
@@ -26,28 +24,17 @@ const heroSchema = new Schema<IHero>(
 		nom: { type: String, required: true },
 		alias: { type: String, required: true },
 		univers: { type: String, required: true },
-		pouvoirs: { type: [String], default: [] },
 		description: { type: String, required: true },
 		image: { type: String },
 		origine: { type: String },
 		premiereApparition: { type: String },
 		stats: {
-			type: {
-				intelligence: { type: Number, min: 0, max: 100, default: 50 },
-				strength: { type: Number, min: 0, max: 100, default: 50 },
-				speed: { type: Number, min: 0, max: 100, default: 50 },
-				durability: { type: Number, min: 0, max: 100, default: 50 },
-				power: { type: Number, min: 0, max: 100, default: 50 },
-				combat: { type: Number, min: 0, max: 100, default: 50 },
-			},
-			default: {
-				intelligence: 50,
-				strength: 50,
-				speed: 50,
-				durability: 50,
-				power: 50,
-				combat: 50,
-			},
+			intelligence: { type: Number, min: 0, max: 100, default: 50 },
+			strength: { type: Number, min: 0, max: 100, default: 50 },
+			speed: { type: Number, min: 0, max: 100, default: 50 },
+			durability: { type: Number, min: 0, max: 100, default: 50 },
+			power: { type: Number, min: 0, max: 100, default: 50 },
+			combat: { type: Number, min: 0, max: 100, default: 50 },
 		},
 	},
 	{

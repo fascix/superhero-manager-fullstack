@@ -4,15 +4,13 @@ export interface Hero {
 	nom: string;
 	alias: string;
 	univers: string;
-	pouvoirs: string[];
 	description: string;
 	image?: string;
 	origine?: string;
 	premiereApparition?: string;
 	createdAt?: string;
 	DateCreated?: Date;
-	// Stats numériques de pouvoirs (0-100)
-	stats?: {
+	stats: {
 		intelligence: number;
 		strength: number;
 		speed: number;
