@@ -85,10 +85,7 @@ npm run dev
 
 ## 👤 Comptes de test
 
-Le système de seed a été simplifié. Vous pouvez créer des comptes directement depuis l'interface.
-
-- **Admin**: Créez un compte 'admin' pour un accès complet.
-- **Éditeur**: Créez un compte 'editor' pour un accès limité.
+Par défaut 3 comptes existe (admin, editor, visitor : leurs mots sont noms d'utilisateur + 123 ; exemple editor123), un admin doit ajouter lui même les nouveaux comptes pour plus de sécurité
 
 ## 🔍 Utilisation de la recherche
 
@@ -182,9 +179,6 @@ npm run lint         # Vérifier le code
 - Vérifiez que MongoDB est démarré.
 - Vérifiez le fichier `.env` avec MONGO_URI et JWT_SECRET.
 - Port par défaut: 5001.
-
-### Problème de connexion utilisateur
-- Créez un compte depuis l'interface.
 
 ### Images ne s'affichent pas
 - Vérifiez que le dossier `backend/uploads/` existe.
